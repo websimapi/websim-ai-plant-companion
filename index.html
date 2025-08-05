@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Plant Companion</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌱 AI Plant Companion</h1>
+            <p>Your plant listens and grows based on your voice and emotions</p>
+        </header>
+        
+        <div class="plant-container">
+            <canvas id="plantCanvas" width="400" height="500"></canvas>
+            <div class="plant-status">
+                <div class="status-item">
+                    <span class="label">Mood:</span>
+                    <span id="plantMood">Neutral</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Growth Stage:</span>
+                    <span id="plantGrowth">Seedling</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Last Response:</span>
+                    <span id="lastResponse">Waiting for your voice...</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="startListening" class="btn primary">🎤 Start Listening</button>
+            <button id="stopListening" class="btn secondary" disabled>🔇 Stop Listening</button>
+            <div class="audio-visualizer">
+                <canvas id="visualizer" width="300" height="60"></canvas>
+            </div>
+        </div>
+        
+        <div class="data-display">
+            <h3>Current Audio Analysis</h3>
+            <div class="data-grid">
+                <div class="data-item">
+                    <label>Speech:</label>
+                    <span id="speechText">-</span>
+                </div>
+                <div class="data-item">
+                    <label>Dominant Frequency:</label>
+                    <span id="dominantFreq">-</span>
+                </div>
+                <div class="data-item">
+                    <label>Volume Level:</label>
+                    <span id="volumeLevel">-</span>
+                </div>
+                <div class="data-item">
+                    <label>Tone:</label>
+                    <span id="toneAnalysis">-</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="plant-thoughts">
+            <h3>🌿 Plant's Thoughts</h3>
+            <div id="plantThoughts">I'm waiting to hear your voice...</div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+    <script src="plant.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
+
