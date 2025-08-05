@@ -37,11 +37,11 @@ header p {
 .plant-container {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
-    padding: 30px;
+    padding: 20px;
     margin-bottom: 30px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     display: flex;
-    gap: 30px;
+    gap: 20px;
     align-items: flex-start;
 }
 
@@ -49,6 +49,8 @@ header p {
     border: 2px solid #e0e0e0;
     border-radius: 15px;
     background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 50%, #8B4513 100%);
+    max-width: 100%;
+    height: auto;
 }
 
 .plant-status {
@@ -184,19 +186,93 @@ header p {
 }
 
 @media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
     .plant-container {
         flex-direction: column;
         text-align: center;
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    #plantCanvas {
+        width: 100%;
+        max-width: 350px;
+        height: 400px;
+    }
+    
+    .plant-status {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .controls {
+        padding: 20px 15px;
+    }
+    
+    .data-display, .plant-thoughts {
+        padding: 20px 15px;
     }
     
     .data-grid {
         grid-template-columns: 1fr;
+        gap: 10px;
     }
     
     .btn {
         display: block;
         margin: 10px auto;
-        width: 80%;
+        width: 90%;
+        max-width: 300px;
+        padding: 12px 20px;
+    }
+    
+    .audio-visualizer {
+        margin-top: 15px;
+    }
+    
+    #visualizer {
+        width: 100%;
+        max-width: 280px;
+        height: 50px;
     }
 }
 
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    header p {
+        font-size: 1rem;
+    }
+    
+    .plant-container {
+        padding: 10px;
+    }
+    
+    #plantCanvas {
+        max-width: 300px;
+        height: 350px;
+    }
+    
+    .controls, .data-display, .plant-thoughts {
+        padding: 15px 10px;
+    }
+    
+    .status-item, .data-item {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .btn {
+        padding: 10px 15px;
+        font-size: 1rem;
+    }
+}

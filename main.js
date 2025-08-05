@@ -7,6 +7,7 @@ class AudioAnalyzer {
         this.isListening = false;
         this.recognition = null;
         this.lastProcessTime = 0;
+        this.autoStartAttempted = false;
         this.currentAudioData = {
             speech: '',
             dominantFrequency: 0,
@@ -17,6 +18,7 @@ class AudioAnalyzer {
 
         this.setupSpeechRecognition();
         this.setupEventListeners();
+        this.attemptAutoStart();
     }
 
     setupSpeechRecognition() {
@@ -211,10 +213,25 @@ class AudioAnalyzer {
             this.currentAudioData.speech = '';
         }
     }
+
+    async attemptAutoStart() {
+        if (this.autoStartAttempted) return;
+        this.autoStartAttempted = true;
+        
+        // Wait a bit for page to fully load
+        setTimeout(async () => {
+            try {
+                await this.startListening();
+            } catch (error) {
+                console.log('Auto-start failed, user interaction required:', error);
+                // Show a friendly message
+                document.getElementById('speechText').textContent = 'Tap "Start Listening" to begin';
+            }
+        }, 1000);
+    }
 }
 
 // Initialize the audio analyzer when the page loads
 window.addEventListener('load', () => {
     window.audioAnalyzer = new AudioAnalyzer();
 });
-

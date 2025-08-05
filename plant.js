@@ -3,22 +3,61 @@ class AIPlant {
         this.canvas = document.getElementById('plantCanvas');
         this.ctx = this.canvas.getContext('2d');
         this.conversationHistory = [];
+        this.growthTimer = null;
         
         this.state = {
             mood: 'neutral',
-            growth: 0.3, // 0-1 scale
+            growth: 0.0, // Start at stage 0
             health: 0.8,
             energy: 0.5,
             color: { r: 34, g: 139, b: 34 }, // Forest green
             size: 1.0,
-            leafCount: 5,
-            thoughts: "I'm waiting to hear your voice..."
+            leafCount: 3, // Start with fewer leaves
+            thoughts: "I'm just a tiny seed, waiting to hear your voice..."
         };
 
         this.growthStages = ['Seed', 'Sprout', 'Seedling', 'Young Plant', 'Mature Plant', 'Blooming'];
         
         this.render();
         this.startIdleAnimation();
+        this.startGradualGrowth();
+    }
+
+    startGradualGrowth() {
+        // Grow slowly over time (every 45 seconds)
+        this.growthTimer = setInterval(() => {
+            if (this.state.growth < 1.0) {
+                const growthIncrement = 0.02 + (this.state.energy * 0.01); // Base growth + energy bonus
+                this.state.growth = Math.min(1.0, this.state.growth + growthIncrement);
+                
+                // Update leaf count and size based on growth
+                this.state.leafCount = Math.floor(3 + this.state.growth * 8);
+                this.state.size = 0.4 + this.state.growth * 0.8;
+                
+                this.updateUI();
+                this.render();
+                
+                // Update thoughts based on growth stage
+                this.updateGrowthThoughts();
+            }
+        }, 45000); // Every 45 seconds
+    }
+
+    updateGrowthThoughts() {
+        const stage = Math.floor(this.state.growth * (this.growthStages.length - 1));
+        const growthMessages = [
+            "I'm still just a seed, but I can feel myself changing...",
+            "I'm sprouting! Your voice gives me strength to grow.",
+            "Look at my little leaves! I'm becoming a real plant.",
+            "I'm growing stronger every day thanks to your attention.",
+            "I feel mature and wise now. Thank you for nurturing me.",
+            "I'm ready to bloom! Your care has made me beautiful."
+        ];
+        
+        if (!this.state.thoughts.includes("Audio Analysis") && !this.state.thoughts.includes("I hear")) {
+            this.state.thoughts = growthMessages[stage] || this.state.thoughts;
+            document.getElementById('plantThoughts').textContent = this.state.thoughts;
+        }
     }
 
     async processAudioData(audioData) {
@@ -115,8 +154,8 @@ Timestamp: ${new Date(audioData.timestamp).toLocaleTimeString()}`
         this.state.thoughts = changes.thoughts || this.state.thoughts;
         
         // Update leaf count based on growth
-        this.state.leafCount = Math.floor(3 + this.state.growth * 10);
-        this.state.size = 0.5 + this.state.growth * 0.8;
+        this.state.leafCount = Math.floor(3 + this.state.growth * 8);
+        this.state.size = 0.4 + this.state.growth * 0.8;
 
         this.updateUI();
         this.render();
@@ -135,32 +174,50 @@ Timestamp: ${new Date(audioData.timestamp).toLocaleTimeString()}`
         const { width, height } = this.canvas;
         this.ctx.clearRect(0, 0, width, height);
 
+        // Don't draw anything if still a seed (growth < 0.1)
+        if (this.state.growth < 0.1) {
+            // Draw soil
+            this.ctx.fillStyle = '#8B4513';
+            this.ctx.fillRect(0, height - 100, width, 100);
+            
+            // Draw tiny seed
+            this.ctx.fillStyle = '#8B4513';
+            this.ctx.beginPath();
+            this.ctx.arc(width / 2, height - 90, 3, 0, Math.PI * 2);
+            this.ctx.fill();
+            
+            this.drawMoodIndicator();
+            return;
+        }
+
         // Draw soil
         this.ctx.fillStyle = '#8B4513';
         this.ctx.fillRect(0, height - 100, width, 100);
 
-        // Draw plant stem
-        const stemHeight = 100 + this.state.growth * 200;
-        const stemWidth = 8 * this.state.size;
+        // Draw plant stem (starts very small)
+        const stemHeight = Math.max(20, 50 + this.state.growth * 150);
+        const stemWidth = Math.max(2, 4 * this.state.size);
         const stemX = width / 2 - stemWidth / 2;
         const stemY = height - 100 - stemHeight;
 
         this.ctx.fillStyle = `rgb(${this.state.color.r - 20}, ${this.state.color.g - 50}, ${this.state.color.b - 20})`;
         this.ctx.fillRect(stemX, stemY + stemHeight, stemWidth, stemHeight);
 
-        // Draw leaves
-        const leafSize = 20 * this.state.size * this.state.health;
-        for (let i = 0; i < this.state.leafCount; i++) {
-            const angle = (i / this.state.leafCount) * Math.PI * 2;
-            const leafX = width / 2 + Math.cos(angle) * (30 + i * 15) * this.state.size;
-            const leafY = stemY + 50 + Math.sin(angle) * (20 + i * 10) * this.state.size;
+        // Draw leaves (only if growth > 0.2)
+        if (this.state.growth > 0.2) {
+            const leafSize = Math.max(8, 15 * this.state.size * this.state.health);
+            for (let i = 0; i < this.state.leafCount; i++) {
+                const angle = (i / this.state.leafCount) * Math.PI * 2;
+                const leafX = width / 2 + Math.cos(angle) * (20 + i * 10) * this.state.size;
+                const leafY = stemY + 30 + Math.sin(angle) * (15 + i * 8) * this.state.size;
 
-            this.drawLeaf(leafX, leafY, leafSize, angle);
+                this.drawLeaf(leafX, leafY, leafSize, angle);
+            }
         }
 
         // Draw flower if fully grown
         if (this.state.growth > 0.8) {
-            this.drawFlower(width / 2, stemY - 20);
+            this.drawFlower(width / 2, stemY - 15);
         }
 
         // Draw mood indicator
@@ -291,4 +348,3 @@ Timestamp: ${new Date(audioData.timestamp).toLocaleTimeString()}`
 window.addEventListener('load', () => {
     window.plant = new AIPlant();
 });
-
